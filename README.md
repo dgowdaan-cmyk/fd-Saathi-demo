@@ -31,12 +31,12 @@ It helps users choose the most cost-effective option and prevents unnecessary lo
 [FD Saathi Demo video](https://drive.google.com/file/d/1v388AIK2ksj9v-D6n9jTwlxBPVWlYdrD/view?usp=sharing)
 ---
 
-## 🌐 Live Demo FOR LIVE DEMO 
+##  Live Demo FOR LIVE DEMO 
 
  [FD Saathi Live Demo](https://fdsaathifintech.netlify.app)
 ---
 
-## 🧠 System Flow
+## System Flow
 
 User input → FD data analysis → Decision engine → Loan vs FD comparison → Final recommendation
 
