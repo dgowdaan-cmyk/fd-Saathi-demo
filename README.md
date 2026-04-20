@@ -1,6 +1,6 @@
 # FD Saathi 2.0 – FD Retention & Loan Conversion Engine
 
-An AI-powered fintech decision engine that prevents unnecessary FD breakage by comparing loan cost vs penalty and recommending the optimal financial choice in real time.
+# An AI-powered fintech decision engine that prevents unnecessary FD breakage by comparing loan cost vs penalty and recommending the optimal financial choice in real time.
 
 # Problem
 
@@ -51,9 +51,9 @@ User input → FD data analysis → Decision engine → Loan vs FD comparison �
 
 # Tech Stack
 
-*Frontend: HTML, Tailwind CSS, JavaScript
-*Backend (simulation): FastAPI / Node.js logic
-*AI Layer: Decision-based financial engine
+ * Frontend: HTML, Tailwind CSS, JavaScript
+ * Backend (simulation): FastAPI / Node.js logic
+ * AI Layer: Decision-based financial engine
 
 ---
 
