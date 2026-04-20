@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FD Saathi 2.0 – FD Retention & Loan Conversion Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f3;
+  --surface:#ffffff;
+  --surface2:#f0efe9;
+  --surface3:#e8e7df;
+  --border:#dddbd2;
+  --border2:#c8c6bc;
+  --text:#1a1916;
+  --text2:#6b6960;
+  --text3:#9e9c94;
+  --blue:#1a56db;
+  --blue-bg:#eff4ff;
+  --blue-border:#c3d5ff;
+  --green:#0f7a4a;
+  --green-bg:#edfaf2;
+  --green-border:#a7e8c6;
+  --red:#c0392b;
+  --red-bg:#fff0ee;
+  --red-border:#ffc5be;
+  --amber:#92600a;
+  --amber-bg:#fffbeb;
+  --amber-border:#f7d87c;
+  --purple:#5b3fd4;
+  --purple-bg:#f3f0ff;
+  --purple-border:#c8b8ff;
+  --radius:10px;
+  --radius-lg:16px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px}
+.logo-text{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.logo-sub{font-size:11px;color:var(--text3);font-weight:400;margin-top:-1px}
+.nav-pills{display:flex;gap:2px}
+.nav-btn{padding:7px 14px;border:none;background:transparent;color:var(--text2);border-radius:7px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;transition:all .15s}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--surface2);color:var(--text);font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.senior-toggle{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);cursor:pointer;padding:5px 11px;border:1px solid var(--border);border-radius:20px;font-weight:500;transition:all .15s;user-select:none}
+.senior-toggle:hover{border-color:var(--border2);background:var(--surface2)}
+.toggle-track{width:28px;height:16px;background:var(--surface3);border-radius:8px;position:relative;transition:.2s}
+.toggle-track.on{background:var(--purple)}
+.toggle-knob{width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-track.on .toggle-knob{left:14px}
+.demo-btn{padding:8px 18px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:6px}
+.demo-btn:hover{background:#1544c0}
+.demo-btn svg{width:14px;height:14px}
+.page{display:none}.page.active{display:block}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 28px}
+.page-header{margin-bottom:24px}
+.page-title{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.4px}
+.page-sub{font-size:13px;color:var(--text2);margin-top:3px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px}
+.card-header{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.card-header-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.form-group{margin-bottom:12px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px}
+.form-input{width:100%;padding:8px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:all .15s}
+.form-input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.08)}
+input[type="range"].form-input{padding:5px 0;background:transparent;border:none;accent-color:var(--blue)}
+input[type="range"].form-input:focus{box-shadow:none}
+.range-display{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px}
+.btn{padding:9px 18px;border:1px solid transparent;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.btn:hover{opacity:.88;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-sm{padding:6px 13px;font-size:12px}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.metric{background:var(--surface2);border-radius:10px;padding:14px;text-align:center}
+.metric-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.metric-value{font-size:22px;font-weight:700;line-height:1;letter-spacing:-.5px}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.decision-box{border-radius:12px;padding:16px;border:2px solid var(--border);background:var(--surface2);transition:all .4s}
+.decision-box.loan{border-color:var(--green-border);background:var(--green-bg)}
+.decision-box.break{border-color:var(--amber-border);background:var(--amber-bg)}
+.decision-icon{font-size:28px;margin-bottom:8px}
+.decision-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.decision-desc{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5}
+.progress-track{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin:6px 0}
+.progress-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.progress-blue{background:linear-gradient(90deg,var(--blue) 0%,#5b8fff 100%)}
+.progress-green{background:linear-gradient(90deg,var(--green) 0%,#22c55e 100%)}
+.progress-purple{background:linear-gradient(90deg,var(--purple) 0%,#a78bfa 100%)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)}
+.ai-box{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 10px 10px 0;padding:13px 15px;font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px}
+.ai-label{font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.senior-box{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:10px;padding:14px;margin-top:12px;display:none}
+.senior-box.visible{display:block}
+.senior-text{font-size:15px;color:var(--text);line-height:1.7}
+.viz-bar-row{display:flex;align-items:center;gap:10px;margin:6px 0}
+.viz-bar-label{font-size:12px;color:var(--text2);min-width:110px;text-align:right;font-weight:500}
+.viz-bar-track{flex:1;height:12px;background:var(--surface2);border-radius:6px;overflow:hidden}
+.viz-bar-fill{height:100%;border-radius:6px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+.viz-bar-value{font-size:12px;font-weight:700;min-width:80px}
+.log-wrap{background:#1a1916;border:1px solid #2d2c28;border-radius:10px;padding:12px;font-family:'DM Mono',monospace;font-size:11.5px;max-height:200px;overflow-y:auto}
+.log-row{display:flex;gap:10px;padding:2px 0;animation:logIn .2s ease}
+@keyframes logIn{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:translateX(0)}}
+.log-time{color:#4a4843;min-width:52px}
+.log-type-fd{color:#60a5fa}
+.log-type-ai{color:#a78bfa}
+.log-type-loan{color:#34d399}
+.log-type-ok{color:#34d399}
+.log-type-err{color:#f87171}
+.log-type-engine{color:#fbbf24}
+.log-type-demo{color:#fb923c}
+.log-msg{color:#a39f96}
+.wa-wrap{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.wa-header{background:#128C7E;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.wa-avatar{width:38px;height:38px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px}
+.wa-name{font-size:14px;font-weight:700;color:#fff}
+.wa-status{font-size:11px;color:#acf5e3}
+.wa-body{background:#ece5dd;padding:12px;min-height:200px;display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto}
+.wa-msg{max-width:85%;padding:8px 12px;font-size:13px;line-height:1.5;border-radius:8px}
+.wa-msg.user{background:#dcf8c6;align-self:flex-end;border-radius:8px 8px 0 8px}
+.wa-msg.bot{background:#fff;align-self:flex-start;border-radius:0 8px 8px 8px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.wa-tick{font-size:10px;color:#8b9eb5;text-align:right;margin-top:2px}
+.wa-footer{padding:10px 12px;background:#f0f0f0;display:flex;gap:8px;align-items:center}
+.wa-input{flex:1;background:#fff;border:none;border-radius:20px;padding:8px 14px;font-size:13px;font-family:inherit;color:var(--text);outline:none}
+.wa-send{background:#25D366;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.typing-dots{display:flex;gap:4px;align-items:center;padding:4px 0}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:#aaa;animation:bounce 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.15s}
+.typing-dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border-bottom:none}
+.stat-label{font-size:12px;color:var(--text2);font-weight:500}
+.stat-value{font-size:13px;font-weight:700;color:var(--text)}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:16px 0}
+.arch-node{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;min-width:90px}
+.arch-node.blue{background:var(--blue-bg);border-color:var(--blue-border)}
+.arch-node.green{background:var(--green-bg);border-color:var(--green-border)}
+.arch-node.purple{background:var(--purple-bg);border-color:var(--purple-border)}
+.arch-node.amber{background:var(--amber-bg);border-color:var(--amber-border)}
+.arch-icon{font-size:20px;margin-bottom:3px}
+.arch-label{font-size:12px;font-weight:700;color:var(--text)}
+.arch-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.arch-arrow{color:var(--text3);font-size:16px;flex-shrink:0}
+.rev-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface2);border-radius:9px;margin-bottom:8px}
+.rev-name{font-size:13px;font-weight:600;color:var(--text)}
+.rev-model{font-size:11px;color:var(--text3);margin-top:2px}
+.rev-amount{font-size:15px;font-weight:700;color:var(--green)}
+.scenario-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
+.scenario-card:hover{border-color:var(--border2);background:var(--surface)}
+.scenario-card.selected{border-color:var(--blue);background:var(--blue-bg)}
+.scenario-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.scenario-desc{font-size:11px;color:var(--text2)}
+.voice-btn{padding:10px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:24px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;color:var(--text);display:flex;align-items:center;gap:8px;transition:all .2s;position:relative;overflow:hidden}
+.voice-btn.listening{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
+.voice-btn.listening::before{content:'';position:absolute;inset:0;background:rgba(192,57,43,.05);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.lang-grid{display:flex;gap:6px}
+.lang-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;color:var(--text2);background:transparent;transition:all .15s}
+.lang-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.tag{display:inline-block;padding:2px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;font-size:11px;font-weight:600;color:var(--text2)}
+.tooltip-wrap{position:relative;display:inline-flex}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600}
+.pill-green{background:var(--green-bg);color:var(--green)}
+.pill-amber{background:var(--amber-bg);color:var(--amber)}
+.pill-red{background:var(--red-bg);color:var(--red)}
+.sec-mode .form-label,.sec-mode .card-header,.sec-mode .metric-label,.sec-mode .stat-label,.sec-mode .log-msg{font-size:14px!important}
+.sec-mode .metric-value{font-size:26px!important}
+.sec-mode .senior-text{font-size:17px!important}
+.spin{animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.section-divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.section-divider-line{flex:1;height:1px;background:var(--border)}
+.section-divider-text{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+.fade-in{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+canvas{display:block}
+.chart-wrap{position:relative;height:180px;margin-top:12px}
+.demo-banner{background:linear-gradient(90deg,var(--blue-bg),var(--purple-bg));border:1px solid var(--blue-border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:16px;display:none}
+.demo-banner.visible{display:flex}
+.demo-banner-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.5s infinite}
+.demo-banner-text{font-size:13px;font-weight:600;color:var(--blue)}
+.api-endpoint{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.api-endpoint:hover{border-color:var(--border2);background:var(--surface)}
+.api-method{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-right:8px}
+.method-get{background:var(--green-bg);color:var(--green)}
+.method-post{background:var(--blue-bg);color:var(--blue)}
+.api-path{font-family:'DM Mono',monospace;font-size:12px;color:var(--text);font-weight:500}
+.api-desc{font-size:11px;color:var(--text3);margin-top:3px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">FS</div>
+    <div>
+      <div class="logo-text">FD Saathi 2.0</div>
+      <div class="logo-sub">FD Retention &amp; Loan Conversion Engine</div>
+    </div>
+  </div>
+  <div class="nav-pills">
+    <button class="nav-btn active" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="nav-btn" onclick="showPage('simulator',this)">What-If</button>
+    <button class="nav-btn" onclick="showPage('whatsapp',this)">WhatsApp Bot</button>
+    <button class="nav-btn" onclick="showPage('api',this)">API Logs</button>
+    <button class="nav-btn" onclick="showPage('arch',this)">Architecture</button>
+    <button class="nav-btn" onclick="showPage('revenue',this)">Revenue</button>
+  </div>
+  <div class="topbar-right">
+    <div class="lang-grid">
+      <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',this)">HI</button>
+      <button class="lang-btn" onclick="setLang('kn',this)">KN</button>
+    </div>
+    <div class="senior-toggle" onclick="toggleSenior()">
+      <span>Senior Mode</span>
+      <div class="toggle-track" id="seniorTrack"><div class="toggle-knob"></div></div>
+    </div>
+    <button class="demo-btn" onclick="runDemo()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Run Demo
+    </button>
+  </div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page active">
+<div class="wrap">
+  <div class="demo-banner" id="demoBanner">
+    <div class="demo-banner-dot"></div>
+    <span class="demo-banner-text">Demo mode running — auto-filling parameters and simulating API calls...</span>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    <!-- LEFT: Input -->
+    <div>
+      <div class="card">
+        <div class="card-header" style="color:var(--blue)"><span class="card-header-dot"></span>FD Parameters</div>
+        <div class="form-group">
+          <label class="form-label">FD Amount (₹)</label>
+          <input type="number" id="fdAmount" class="form-input" value="500000" oninput="liveCalc()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">FD Interest Rate (%)</label>
+          <input type="range" id="fdRate" class="form-input" min="4" max="10" step="0.25" value="7.5" oninput="updateRange('fdRate','fdRateVal','%');liveCalc()">
+          <div class="range-display"><span>4%</span><span id="fdRateVal" style="font-weight:700;color:var(--text)">7.50%</span><span>10%</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Days Remaining to Maturity</label>
+          <input type="range" id="daysLeft" class="form-input" min="30" max="720" step="10" value="180" oninput="updateRange('daysLeft','daysVal',' days');liveCalc()">
+          <div class="range-display"><span>30d</span><span id="daysVal" style="font-weight:700;color:var(--text)">180 days</span><span>720d</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loan Interest Rate (%)</label>
+          <input type="range" id="loanRate" class="form-input" min="8" max="18" step="0.5" value="11" oninput="updateRange('loanRate','loanRateVal','%');liveCalc()">
+          <div class="range-display"><span>8%</span><span id="loanRateVal" style="font-weight:700;color:var(--text)">11.00%</span><span>18%</span></div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="analyze()" id="analyzeBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Analyze FD
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="applyLoan()">Apply Loan</button>
+          <button class="btn btn-ghost btn-sm" onclick="explainSimple()">💬 Explain Simply</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleVoice()" id="voiceBtn">🎤 Voice</button>
+        </div>
+      </div>
+
+      <!-- Preset Scenarios -->
+      <div class="card" style="margin-top:16px">
+        <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Quick Scenarios</div>
+        <div class="grid-2" style="gap:8px">
+          <div class="scenario-card" onclick="loadScenario('emergency')">
+            <div class="scenario-name">🚨 Emergency Fund</div>
+            <div class="scenario-desc">₹5L FD, 90 days left, medical emergency</div>
+          </div>
+          <div class="scenario-card" onclick="loadScenario('senior')">
+            <div class="scenario-name">👴 Senior Citizen</div>
+            <div class="scenario-desc">₹10L FD, 7.5% rate, 365 days left</div>
+          </div>
+          <div class="scenario-card" onclick="loadScenario('business')">
+            <div class="scenario-name">🏢 Business Capital</div>
+            <div class="scenario-desc">₹25L FD, 240 days, working capital need</div>
+          </div>
+          <div class="scenario-card" onclick="loadScenario('education')">
+            <div class="scenario-name">🎓 Education Loan</div>
+            <div class="scenario-desc">₹8L FD, 6 months to break, admission fee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div>
+      <!-- Decision Box -->
+      <div class="decision-box" id="decisionBox">
+        <div class="metric-grid" id="metricsGrid">
+          <div class="metric">
+            <div class="metric-label">FD Penalty</div>
+            <div class="metric-value" id="penaltyVal" style="color:var(--red)">₹—</div>
+            <div class="metric-sub">If broken early</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Loan Interest</div>
+            <div class="metric-value" id="loanIntVal" style="color:var(--blue)">₹—</div>
+            <div class="metric-sub">For same period</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Net Savings</div>
+            <div class="metric-value" id="savingsVal" style="color:var(--green)">₹—</div>
+            <div class="metric-sub">By taking loan</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Confidence</div>
+            <div class="metric-value" id="confVal" style="color:var(--purple)">—</div>
+            <div class="metric-sub">AI Score</div>
+          </div>
+        </div>
+        <div id="decisionContent">
+          <div style="text-align:center;padding:30px 20px;color:var(--text3)">
+            <div style="font-size:32px;margin-bottom:8px">⚡</div>
+            <div style="font-size:14px;font-weight:600">Enter parameters and click Analyze</div>
+            <div style="font-size:12px;margin-top:4px">The AI engine will compute the optimal decision</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visualization -->
+      <div class="card" style="margin-top:16px" id="vizCard">
+        <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Cost Comparison</div>
+        <div id="vizBars">
+          <div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Run analysis to see visualization</div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="comparisonChart" role="img" aria-label="Bar chart comparing FD penalty vs loan interest vs net savings">Chart will appear after analysis</canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Reasoning + Senior Explain + Loan Result -->
+  <div class="grid-2" style="gap:16px;margin-top:16px" id="bottomSection">
+    <div class="card" id="aiSection">
+      <div class="card-header" style="color:var(--purple)"><span class="card-header-dot"></span>AI Decision Engine</div>
+      <div id="aiContent">
+        <div style="color:var(--text3);font-size:12px;padding:8px 0">Analysis result will appear here</div>
+      </div>
+    </div>
+    <div class="card" id="loanSection">
+      <div class="card-header" style="color:var(--green)"><span class="card-header-dot"></span>Loan Approval Status</div>
+      <div id="loanContent">
+        <div style="color:var(--text3);font-size:12px;padding:8px 0">Apply for loan to see approval details</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Logs inline -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Live API Logs</div>
+    <div class="log-wrap" id="apiLogsMini">
+      <div class="log-row"><span class="log-time">--:--:--</span><span class="log-type-engine">engine</span><span class="log-msg">FD Saathi 2.0 initialized. Ready for analysis.</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SIMULATOR PAGE -->
+<div id="page-simulator" class="page">
+<div class="wrap">
+  <div class="page-header">
+    <div class="page-title">What-If Simulator</div>
+    <div class="page-sub">Explore different FD scenarios and see how outcomes change in real-time</div>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    <div>
+      <div class="card">
+        <div class="card-header" style="color:var(--blue)"><span class="card-header-dot"></span>Scenario Parameters</div>
+        <div class="form-group">
+          <label class="form-label">FD Amount: <span id="simAmtDisplay" style="color:var(--blue);font-weight:700">₹5,00,000</span></label>
+          <input type="range" id="simAmt" class="form-input" min="50000" max="5000000" step="50000" value="500000" oninput="simUpdate()">
+          <div class="range-display"><span>₹50K</span><span>₹50L</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tenure Remaining: <span id="simDaysDisplay" style="color:var(--blue);font-weight:700">180 days</span></label>
+          <input type="range" id="simDays" class="form-input" min="30" max="720" step="10" value="180" oninput="simUpdate()">
+          <div class="range-display"><span>30d</span><span>720d</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">FD Rate: <span id="simFdRateDisplay" style="color:var(--blue);font-weight:700">7.5%</span></label>
+          <input type="range" id="simFdRate" class="form-input" min="4" max="10" step="0.25" value="7.5" oninput="simUpdate()">
+          <div class="range-display"><span>4%</span><span>10%</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loan Rate: <span id="simLoanRateDisplay" style="color:var(--blue);font-weight:700">11%</span></label>
+          <input type="range" id="simLoanRate" class="form-input" min="8" max="18" step="0.5" value="11" oninput="simUpdate()">
+          <div class="range-display"><span>8%</span><span>18%</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Live Outcome</div>
+        <div id="simResult"></div>
+        <div class="chart-wrap" style="height:200px">
+          <canvas id="simChart" role="img" aria-label="Comparison bar chart of FD penalty vs loan interest"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Sensitivity: How loan rate affects recommendation</div>
+    <div id="sensitivityTable"></div>
+  </div>
+</div>
+</div>
+
+<!-- WHATSAPP PAGE -->
+<div id="page-whatsapp" class="page">
+<div class="wrap">
+  <div class="page-header">
+    <div class="page-title">WhatsApp Bot Simulation</div>
+    <div class="page-sub">Simulate how a customer interacts with FD Saathi via WhatsApp</div>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    <div>
+      <div class="wa-wrap">
+        <div class="wa-header">
+          <div class="wa-avatar">FS</div>
+          <div>
+            <div class="wa-name">FD Saathi Bot</div>
+            <div class="wa-status">● Online</div>
+          </div>
+        </div>
+        <div class="wa-body" id="waMessages">
+          <div class="wa-msg bot">
+            Namaste! 🙏 I'm FD Saathi. I can help you decide whether to break your FD or take a loan against it. Just type your FD amount to get started!
+            <div class="wa-tick">✓✓ 10:00 AM</div>
+          </div>
+        </div>
+        <div class="wa-footer">
+          <input class="wa-input" id="waInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendWa()">
+          <button class="wa-send" onclick="sendWa()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="waQuick('My FD is ₹5 lakhs')">₹5L FD</button>
+        <button class="btn btn-ghost btn-sm" onclick="waQuick('Should I break my FD?')">Break FD?</button>
+        <button class="btn btn-ghost btn-sm" onclick="waQuick('What is loan against FD?')">Loan info</button>
+        <button class="btn btn-ghost btn-sm" onclick="waDemo()">▶ Run Full Demo</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearWa()">Clear</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Bot Flow</div>
+        <div style="font-size:12px;color:var(--text2);line-height:2">
+          <div style="margin-bottom:6px"><span class="badge badge-blue">Step 1</span> Customer sends FD amount</div>
+          <div style="margin-bottom:6px"><span class="badge badge-blue">Step 2</span> Bot asks for interest rate &amp; days remaining</div>
+          <div style="margin-bottom:6px"><span class="badge badge-blue">Step 3</span> Decision engine computes penalty vs loan cost</div>
+          <div style="margin-bottom:6px"><span class="badge badge-green">Step 4</span> Bot delivers recommendation in plain language</div>
+          <div style="margin-bottom:6px"><span class="badge badge-green">Step 5</span> One-click loan application if recommended</div>
+        </div>
+        <div class="divider"></div>
+        <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Bot Stats (Today)</div>
+        <div class="stat-row"><span class="stat-label">Messages Handled</span><span class="stat-value">1,247</span></div>
+        <div class="stat-row"><span class="stat-label">FDs Retained</span><span class="stat-value" style="color:var(--green)">89</span></div>
+        <div class="stat-row"><span class="stat-label">Loans Converted</span><span class="stat-value" style="color:var(--blue)">34</span></div>
+        <div class="stat-row"><span class="stat-label">Avg Response Time</span><span class="stat-value">1.2s</span></div>
+        <div class="stat-row"><span class="stat-label">Customer Satisfaction</span><span class="stat-value" style="color:var(--green)">94%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- API LOGS PAGE -->
+<div id="page-api" class="page">
+<div class="wrap">
+  <div class="page-header">
+    <div class="page-title">API Logs &amp; Endpoints</div>
+    <div class="page-sub">Real-time API activity and endpoint documentation</div>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    <div>
+      <div class="card">
+        <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Available Endpoints</div>
+        <div class="api-endpoint" onclick="fireApi('fd')">
+          <div><span class="api-method method-get">GET</span><span class="api-path">/fd/analyze</span></div>
+          <div class="api-desc">Analyze FD penalty vs loan cost. Returns decision, confidence, risk.</div>
+        </div>
+        <div class="api-endpoint" onclick="fireApi('loan')">
+          <div><span class="api-method method-post">POST</span><span class="api-path">/loan/apply</span></div>
+          <div class="api-desc">Apply for loan against FD. Returns approval and EMI breakdown.</div>
+        </div>
+        <div class="api-endpoint" onclick="fireApi('ai')">
+          <div><span class="api-method method-post">POST</span><span class="api-path">/ai/decision</span></div>
+          <div class="api-desc">Get AI decision with reasoning, confidence score, and risk level.</div>
+        </div>
+        <div class="api-endpoint" onclick="fireApi('health')">
+          <div><span class="api-method method-get">GET</span><span class="api-path">/health</span></div>
+          <div class="api-desc">Service health check. Returns status and version.</div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="fireAllApis()">Fire All APIs</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearLogs()">Clear Logs</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="height:100%">
+        <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Live Log Stream</div>
+        <div class="log-wrap" id="apiLogsMain" style="max-height:400px">
+          <div class="log-row"><span class="log-time">--:--:--</span><span class="log-type-engine">sys</span><span class="log-msg">FD Saathi API gateway listening on :8000</span></div>
+          <div class="log-row"><span class="log-time">--:--:--</span><span class="log-type-engine">sys</span><span class="log-msg">Decision engine loaded. 3 models ready.</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="stat-row"><span class="stat-label">Total Requests (session)</span><span class="stat-value" id="reqCount">0</span></div>
+          <div class="stat-row"><span class="stat-label">Success Rate</span><span class="stat-value" style="color:var(--green)">100%</span></div>
+          <div class="stat-row"><span class="stat-label">Avg Latency</span><span class="stat-value">38ms</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ARCHITECTURE PAGE -->
+<div id="page-arch" class="page">
+<div class="wrap">
+  <div class="page-header">
+    <div class="page-title">System Architecture</div>
+    <div class="page-sub">How FD Saathi 2.0 processes decisions end-to-end</div>
+  </div>
+  <div class="card">
+    <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Request Flow</div>
+    <div class="arch-flow">
+      <div class="arch-node blue"><div class="arch-icon">📱</div><div class="arch-label">Customer</div><div class="arch-sub">WhatsApp / Web</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node"><div class="arch-icon">🌐</div><div class="arch-label">API Gateway</div><div class="arch-sub">FastAPI :8000</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node purple"><div class="arch-icon">🧠</div><div class="arch-label">AI Engine</div><div class="arch-sub">Decision Model</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node green"><div class="arch-icon">✅</div><div class="arch-label">Response</div><div class="arch-sub">JSON + Insight</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Internal Components</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+      <div class="arch-node" style="flex:1;min-width:140px">
+        <div class="arch-icon">📊</div>
+        <div class="arch-label">FD Router</div>
+        <div class="arch-sub">/fd/analyze — Penalty calc</div>
+      </div>
+      <div class="arch-node" style="flex:1;min-width:140px">
+        <div class="arch-icon">💳</div>
+        <div class="arch-label">Loan Router</div>
+        <div class="arch-sub">/loan/apply — Approval engine</div>
+      </div>
+      <div class="arch-node" style="flex:1;min-width:140px">
+        <div class="arch-icon">🤖</div>
+        <div class="arch-label">AI Router</div>
+        <div class="arch-sub">/ai/decision — Reasoning</div>
+      </div>
+      <div class="arch-node" style="flex:1;min-width:140px">
+        <div class="arch-icon">💬</div>
+        <div class="arch-label">WhatsApp</div>
+        <div class="arch-sub">Twilio / Meta API</div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2" style="gap:16px;margin-top:16px">
+    <div class="card">
+      <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Tech Stack</div>
+      <div class="stat-row"><span class="stat-label">Backend</span><span class="stat-value"><span class="tag">FastAPI</span> <span class="tag">Python 3.11</span></span></div>
+      <div class="stat-row"><span class="stat-label">Frontend</span><span class="stat-value"><span class="tag">React 18</span> <span class="tag">Tailwind</span></span></div>
+      <div class="stat-row"><span class="stat-label">AI Engine</span><span class="stat-value"><span class="tag">Custom Decision Model</span></span></div>
+      <div class="stat-row"><span class="stat-label">Messaging</span><span class="stat-value"><span class="tag">WhatsApp Business API</span></span></div>
+      <div class="stat-row"><span class="stat-label">Deployment</span><span class="stat-value"><span class="tag">Vercel</span> <span class="tag">Railway</span></span></div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Decision Engine Logic</div>
+      <div style="background:var(--surface2);border-radius:9px;padding:13px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.9;color:var(--text2)">
+        <div><span style="color:var(--purple)">penalty</span> = amt × 0.5% + amt × rate × days/365 × 10%</div>
+        <div><span style="color:var(--blue)">loan_cost</span> = amt × loan_rate × days/365</div>
+        <div><span style="color:var(--green)">savings</span> = penalty − loan_cost</div>
+        <div style="margin-top:6px"><span style="color:var(--amber)">if</span> savings &gt; 0 → <strong>TAKE LOAN</strong></div>
+        <div><span style="color:var(--amber)">else</span> → <strong>BREAK FD</strong></div>
+        <div style="margin-top:6px"><span style="color:var(--text3)">// Confidence: 93% if |Δ|&gt;2%, 78% if &gt;0.5%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- REVENUE PAGE -->
+<div id="page-revenue" class="page">
+<div class="wrap">
+  <div class="page-header">
+    <div class="page-title">Revenue Model</div>
+    <div class="page-sub">How FD Saathi 2.0 generates value for banking partners</div>
+  </div>
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="metric"><div class="metric-label">FDs Retained</div><div class="metric-value" style="color:var(--green)">₹42Cr</div><div class="metric-sub">This month</div></div>
+    <div class="metric"><div class="metric-label">Loans Converted</div><div class="metric-value" style="color:var(--blue)">₹8.7Cr</div><div class="metric-sub">Loan book added</div></div>
+    <div class="metric"><div class="metric-label">SaaS Revenue</div><div class="metric-value" style="color:var(--purple)">₹3.2L</div><div class="metric-sub">MRR</div></div>
+    <div class="metric"><div class="metric-label">NPS Score</div><div class="metric-value" style="color:var(--amber)">78</div><div class="metric-sub">Customer satisfaction</div></div>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    <div class="card">
+      <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Revenue Streams</div>
+      <div class="rev-item">
+        <div><div class="rev-name">SaaS Licensing</div><div class="rev-model">Per-bank monthly subscription</div></div>
+        <div class="rev-amount">₹2–10L/mo</div>
+      </div>
+      <div class="rev-item">
+        <div><div class="rev-name">Per-Decision API</div><div class="rev-model">₹2 per API call beyond free tier</div></div>
+        <div class="rev-amount">₹0.50–2/call</div>
+      </div>
+      <div class="rev-item">
+        <div><div class="rev-name">Loan Conversion Fee</div><div class="rev-model">Commission on successful loan origination</div></div>
+        <div class="rev-amount">0.5% of loan</div>
+      </div>
+      <div class="rev-item">
+        <div><div class="rev-name">WhatsApp Bot Setup</div><div class="rev-model">One-time integration + maintenance</div></div>
+        <div class="rev-amount">₹5–25L setup</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Target Clients</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="rev-item"><div><div class="rev-name">Cooperative Banks</div><div class="rev-model">50–200 branches, manual FD process</div></div><span class="badge badge-blue">Priority</span></div>
+        <div class="rev-item"><div><div class="rev-name">NBFCs</div><div class="rev-model">Digital-first, API integration</div></div><span class="badge badge-green">High</span></div>
+        <div class="rev-item"><div><div class="rev-name">Small Finance Banks</div><div class="rev-model">High FD portfolio, tech-ready</div></div><span class="badge badge-blue">Priority</span></div>
+        <div class="rev-item"><div><div class="rev-name">Private Banks</div><div class="rev-model">White-label integration</div></div><span class="badge badge-purple">Enterprise</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-header" style="color:var(--text3)"><span class="card-header-dot"></span>Monthly Revenue Projection</div>
+    <div class="chart-wrap" style="height:220px">
+      <canvas id="revenueChart" role="img" aria-label="Revenue projection bar chart showing MRR growth over 12 months"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let seniorMode=false;
+let currentLang='en';
+let reqCount=0;
+let compChart=null;
+let simChartObj=null;
+let revChart=null;
+let waStep=0;
+let demoRunning=false;
+
+const T={
+  en:{loan:'Take a Loan Against FD',break:'Break your FD',loanDesc:'Loan is cheaper than breaking FD',breakDesc:'Breaking FD is the cheaper option'},
+  hi:{loan:'FD पर लोन लें',break:'FD तोड़ें',loanDesc:'लोन, FD तोड़ने से सस्ता है',breakDesc:'FD तोड़ना सस्ता विकल्प है'},
+  kn:{loan:'FD ವಿರುದ್ಧ ಸಾಲ ತೆಗೆಯಿರಿ',break:'FD ಮುರಿಯಿರಿ',loanDesc:'ಸಾಲವು FD ಮುರಿಯುವುದಕ್ಕಿಂತ ಅಗ್ಗವಾಗಿದೆ',breakDesc:'FD ಮುರಿಯುವುದು ಅಗ್ಗದ ಆಯ್ಕೆ'}
+};
+
+function fmt(n){return '₹'+Math.round(n).toLocaleString('en-IN')}
+function pct(n){return Math.round(n)+'%'}
+function timeStr(){return new Date().toTimeString().slice(0,8)}
+
+function updateRange(id,dispId,suffix){
+  const v=parseFloat(document.getElementById(id).value);
+  document.getElementById(dispId).textContent=v.toFixed(suffix==='%'?2:0)+suffix;
+}
+
+function calcFD(amt,fdRate,days,loanRate){
+  const penalty=amt*0.005+amt*(fdRate/100)*(days/365)*0.1;
+  const loanInt=amt*(loanRate/100)*(days/365);
+  const savings=penalty-loanInt;
+  const ratio=(penalty/Math.max(loanInt,1)).toFixed(2);
+  const rec=savings>0?'loan':'break_fd';
+  const absS=Math.abs(savings);
+  const conf=absS>amt*0.02?93:absS>amt*0.005?78:62;
+  const risk=loanRate>13||amt>1000000?'High':loanRate>10.5||savings<5000?'Medium':'Low';
+  return{penalty,loanInt,savings,ratio,rec,conf,risk};
+}
+
+function addLog(type,msg,target='both'){
+  const row=`<div class="log-row"><span class="log-time">${timeStr()}</span><span class="log-type-${type}">${type}</span><span class="log-msg">${msg}</span></div>`;
+  if(target==='both'||target==='mini'){
+    const el=document.getElementById('apiLogsMini');
+    if(el){el.insertAdjacentHTML('afterbegin',row);if(el.children.length>20)el.lastChild.remove();}
+  }
+  if(target==='both'||target==='main'){
+    const el=document.getElementById('apiLogsMain');
+    if(el){el.insertAdjacentHTML('afterbegin',row);if(el.children.length>50)el.lastChild.remove();}
+  }
+  reqCount++;
+  const rc=document.getElementById('reqCount');
+  if(rc)rc.textContent=reqCount;
+}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='simulator')simUpdate();
+  if(id==='revenue')initRevenueChart();
+}
+
+function toggleSenior(){
+  seniorMode=!seniorMode;
+  document.getElementById('seniorTrack').classList.toggle('on',seniorMode);
+  document.body.classList.toggle('sec-mode',seniorMode);
+  addLog('engine',seniorMode?'Senior Citizen Mode ON — larger fonts, simplified language':'Senior Mode OFF');
+}
+
+function setLang(l,btn){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  addLog('engine','Language set to '+l.toUpperCase());
+}
+
+function liveCalc(){
+  const amt=parseFloat(document.getElementById('fdAmount').value)||500000;
+  const fdRate=parseFloat(document.getElementById('fdRate').value);
+  const days=parseInt(document.getElementById('daysLeft').value);
+  const loanRate=parseFloat(document.getElementById('loanRate').value);
+  const r=calcFD(amt,fdRate,days,loanRate);
+  document.getElementById('penaltyVal').textContent=fmt(r.penalty);
+  document.getElementById('loanIntVal').textContent=fmt(r.loanInt);
+  document.getElementById('savingsVal').textContent=r.savings>0?fmt(r.savings):'-'+fmt(-r.savings);
+  document.getElementById('confVal').textContent=r.conf+'%';
+  if(r.savings>0){
+    document.getElementById('savingsVal').style.color='var(--green)';
+  } else {
+    document.getElementById('savingsVal').style.color='var(--red)';
+  }
+}
+
+function analyze(){
+  const amt=parseFloat(document.getElementById('fdAmount').value)||500000;
+  const fdRate=parseFloat(document.getElementById('fdRate').value);
+  const days=parseInt(document.getElementById('daysLeft').value);
+  const loanRate=parseFloat(document.getElementById('loanRate').value);
+  const r=calcFD(amt,fdRate,days,loanRate);
+  addLog('fd','GET /fd/analyze?fd_amount='+Math.round(amt)+'&fd_rate='+fdRate+'&days_left='+days+'&loan_rate='+loanRate);
+  addLog('ai','Decision: '+r.rec+' | conf='+r.conf+'% | risk='+r.risk);
+  renderDecision(r,amt,fdRate,days,loanRate);
+}
+
+function renderDecision(r,amt,fdRate,days,loanRate){
+  const isLoan=r.rec==='loan';
+  const box=document.getElementById('decisionBox');
+  box.className='decision-box '+(isLoan?'loan':'break');
+  const t=T[currentLang]||T.en;
+  const riskColor=r.risk==='High'?'badge-red':r.risk==='Medium'?'badge-amber':'badge-green';
+  document.getElementById('decisionContent').innerHTML=`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <span style="font-size:22px">${isLoan?'✅':'⚠️'}</span>
+          <span class="decision-title">${isLoan?t.loan:t.break}</span>
+        </div>
+        <div class="decision-desc">${isLoan?t.loanDesc:t.breakDesc}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <span class="badge badge-purple">${r.conf}% confidence</span>
+        <span class="badge ${riskColor}">${r.risk} risk</span>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px">Penalty vs Loan Cost ratio: ${r.ratio}×</div>
+      <div class="progress-track"><div class="progress-fill progress-${isLoan?'green':'blue'}" style="width:${r.conf}%"></div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      ${isLoan?'<button class="btn btn-green btn-sm" onclick="applyLoan()">Apply for Loan →</button>':''}
+      <button class="btn btn-ghost btn-sm" onclick="explainSimple()">💬 Explain Simply</button>
+    </div>`;
+
+  // Viz bars
+  const maxVal=Math.max(r.penalty,r.loanInt,Math.abs(r.savings));
+  const pP=Math.round((r.penalty/maxVal)*100);
+  const pL=Math.round((r.loanInt/maxVal)*100);
+  const pS=Math.round((Math.abs(r.savings)/maxVal)*100);
+  document.getElementById('vizBars').innerHTML=`
+    <div class="viz-bar-row"><span class="viz-bar-label">FD Penalty</span><div class="viz-bar-track"><div class="viz-bar-fill" style="width:0%;background:var(--red)" data-w="${pP}%"></div></div><span class="viz-bar-value" style="color:var(--red)">${fmt(r.penalty)}</span></div>
+    <div class="viz-bar-row"><span class="viz-bar-label">Loan Interest</span><div class="viz-bar-track"><div class="viz-bar-fill" style="width:0%;background:var(--blue)" data-w="${pL}%"></div></div><span class="viz-bar-value" style="color:var(--blue)">${fmt(r.loanInt)}</span></div>
+    <div class="viz-bar-row"><span class="viz-bar-label">Net Savings</span><div class="viz-bar-track"><div class="viz-bar-fill" style="width:0%;background:var(--green)" data-w="${pS}%"></div></div><span class="viz-bar-value" style="color:var(--green)">${r.savings>0?'+':'-'}${fmt(Math.abs(r.savings))}</span></div>`;
+  setTimeout(()=>{document.querySelectorAll('#vizBars .viz-bar-fill').forEach(el=>el.style.width=el.dataset.w)},50);
+
+  // AI box
+  const reasoning=isLoan?`FD Penalty (${fmt(r.penalty)}) is ${r.ratio}× higher than loan interest (${fmt(r.loanInt)}). By taking a loan, you preserve your FD and save ${fmt(r.savings)} in net cost. The FD continues to earn ${(fdRate).toFixed(2)}% through maturity.`:`Loan interest (${fmt(r.loanInt)}) exceeds the FD break penalty (${fmt(r.penalty)}). It is cheaper to break the FD and avoid the recurring loan cost. You save ${fmt(Math.abs(r.savings))} by closing early.`;
+  const simpleText=isLoan?`Uncle, please don't break your FD! 🙏 Instead, take a small loan. The bank charges less for the loan than what you lose by breaking your FD. You save ${fmt(r.savings)}!`:`In this case, it is actually cheaper to break your FD. The loan would cost you more money. You save ${fmt(Math.abs(r.savings))} by closing the FD early.`;
+  document.getElementById('aiContent').innerHTML=`
+    <div class="ai-label"><span style="font-size:12px">🤖</span>AI Reasoning</div>
+    <div class="ai-box">${reasoning}</div>
+    <div class="senior-box ${seniorMode?'visible':''}" id="seniorExplain">
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:5px">👴 SIMPLE EXPLANATION</div>
+      <div class="senior-text">${simpleText}</div>
+    </div>`;
+
+  // Chart
+  renderCompChart(r.penalty,r.loanInt,r.savings);
+}
+
+function renderCompChart(penalty,loanInt,savings){
+  const ctx=document.getElementById('comparisonChart').getContext('2d');
+  if(compChart)compChart.destroy();
+  compChart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['FD Penalty','Loan Interest','Net Savings'],
+      datasets:[{
+        label:'Amount (₹)',
+        data:[Math.round(penalty),Math.round(loanInt),Math.round(Math.abs(savings))],
+        backgroundColor:['rgba(192,57,43,.15)','rgba(26,86,219,.15)','rgba(15,122,74,.15)'],
+        borderColor:['#c0392b','#1a56db','#0f7a4a'],
+        borderWidth:2,
+        borderRadius:6,
+        borderSkipped:false
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'₹'+Math.round(v/1000)+'K',font:{size:11}}},
+        x:{grid:{display:false},ticks:{font:{size:11}}}
+      }
+    }
+  });
+}
+
+function applyLoan(){
+  const amt=parseFloat(document.getElementById('fdAmount').value)||500000;
+  const loanRate=parseFloat(document.getElementById('loanRate').value);
+  const approved=Math.round(amt*0.85);
+  const emi=Math.round(approved*(loanRate/100)/12*1.15);
+  addLog('loan','POST /loan/apply {fd_amount:'+Math.round(amt)+', loan_rate:'+loanRate+'}');
+  addLog('ok','Loan APPROVED: '+fmt(approved)+' | EMI: '+fmt(emi)+'/mo');
+  document.getElementById('loanContent').innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <span class="badge badge-green">✓ APPROVED</span>
+      <span style="font-size:12px;color:var(--text3)">Instant sanction</span>
+    </div>
+    <div class="stat-row"><span class="stat-label">Approved Amount</span><span class="stat-value" style="color:var(--green)">${fmt(approved)}</span></div>
+    <div class="stat-row"><span class="stat-label">Monthly EMI</span><span class="stat-value">${fmt(emi)}</span></div>
+    <div class="stat-row"><span class="stat-label">Interest Rate</span><span class="stat-value">${loanRate}% p.a.</span></div>
+    <div class="stat-row"><span class="stat-label">Tenure</span><span class="stat-value">12 months</span></div>
+    <div class="stat-row"><span class="stat-label">Processing Fee</span><span class="stat-value">₹2,000</span></div>
+    <div class="stat-row"><span class="stat-label">Disbursement</span><span class="stat-value" style="color:var(--blue)">Within 24 hours</span></div>
+    <div class="stat-row"><span class="stat-label">FD Status</span><span class="stat-value" style="color:var(--green)">✓ Intact &amp; earning</span></div>
+    <div style="margin-top:12px">
+      <div class="progress-track"><div class="progress-fill progress-green" style="width:85%"></div></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">85% LTV against FD collateral</div>
+    </div>`;
+}
+
+function explainSimple(){
+  const box=document.getElementById('seniorExplain');
+  if(box){box.classList.toggle('visible');return;}
+  addLog('engine','Simple explanation requested');
+  document.getElementById('aiContent').innerHTML+='<div class="senior-box visible" id="seniorExplain"><div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:5px">👴 SIMPLE EXPLANATION</div><div class="senior-text">Run the analysis first, then I will explain in simple words!</div></div>';
+}
+
+function toggleVoice(){
+  const btn=document.getElementById('voiceBtn');
+  const isOn=btn.classList.toggle('listening');
+  btn.textContent=isOn?'🔴 Listening...':'🎤 Voice';
+  if(isOn){
+    addLog('engine','Voice input activated — simulating speech recognition...');
+    setTimeout(()=>{
+      addLog('engine','Voice input: "Mera FD paanch lakh rupay hai, kya mujhe loan lena chahiye?"');
+      document.getElementById('fdAmount').value=500000;
+      liveCalc();
+      btn.classList.remove('listening');
+      btn.textContent='🎤 Voice';
+    },2500);
+  }
+}
+
+function loadScenario(s){
+  document.querySelectorAll('.scenario-card').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  const sc={
+    emergency:{amt:500000,fdRate:7.5,days:90,loanRate:11},
+    senior:{amt:1000000,fdRate:7.75,days:365,loanRate:10.5},
+    business:{amt:2500000,fdRate:7.0,days:240,loanRate:12},
+    education:{amt:800000,fdRate:7.25,days:180,loanRate:11.5}
+  };
+  const p=sc[s];
+  document.getElementById('fdAmount').value=p.amt;
+  document.getElementById('fdRate').value=p.fdRate;
+  document.getElementById('daysLeft').value=p.days;
+  document.getElementById('loanRate').value=p.loanRate;
+  updateRange('fdRate','fdRateVal','%');
+  updateRange('daysLeft','daysVal',' days');
+  updateRange('loanRate','loanRateVal','%');
+  liveCalc();
+  addLog('engine','Scenario loaded: '+s);
+  analyze();
+}
+
+function simUpdate(){
+  const amt=parseFloat(document.getElementById('simAmt').value);
+  const days=parseInt(document.getElementById('simDays').value);
+  const fdRate=parseFloat(document.getElementById('simFdRate').value);
+  const loanRate=parseFloat(document.getElementById('simLoanRate').value);
+  document.getElementById('simAmtDisplay').textContent=fmt(amt);
+  document.getElementById('simDaysDisplay').textContent=days+' days';
+  document.getElementById('simFdRateDisplay').textContent=fdRate.toFixed(2)+'%';
+  document.getElementById('simLoanRateDisplay').textContent=loanRate.toFixed(1)+'%';
+  const r=calcFD(amt,fdRate,days,loanRate);
+  const riskColor=r.risk==='High'?'var(--red)':r.risk==='Medium'?'var(--amber)':'var(--green)';
+  document.getElementById('simResult').innerHTML=`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <div class="metric" style="flex:1"><div class="metric-label">Penalty</div><div class="metric-value" style="color:var(--red);font-size:18px">${fmt(r.penalty)}</div></div>
+      <div class="metric" style="flex:1"><div class="metric-label">Loan Cost</div><div class="metric-value" style="color:var(--blue);font-size:18px">${fmt(r.loanInt)}</div></div>
+      <div class="metric" style="flex:1"><div class="metric-label">Savings</div><div class="metric-value" style="color:${r.savings>0?'var(--green)':'var(--red)'};font-size:18px">${r.savings>0?'+':'-'}${fmt(Math.abs(r.savings))}</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span class="badge ${r.rec==='loan'?'badge-green':'badge-amber'}">${r.rec==='loan'?'✅ Take Loan':'⚠️ Break FD'}</span>
+      <span class="badge badge-purple">${r.conf}% confidence</span>
+      <span class="badge" style="background:${r.risk==='High'?'var(--red-bg)':r.risk==='Medium'?'var(--amber-bg)':'var(--green-bg)'};color:${riskColor};border:1px solid">${r.risk} Risk</span>
+    </div>`;
+  const ctx=document.getElementById('simChart').getContext('2d');
+  if(simChartObj)simChartObj.destroy();
+  simChartObj=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['FD Penalty','Loan Interest'],
+      datasets:[{data:[Math.round(r.penalty),Math.round(r.loanInt)],backgroundColor:['rgba(192,57,43,.15)','rgba(26,86,219,.15)'],borderColor:['#c0392b','#1a56db'],borderWidth:2,borderRadius:6,borderSkipped:false}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'₹'+Math.round(v/1000)+'K',font:{size:10}}},x:{grid:{display:false},ticks:{font:{size:11}}}}}
+  });
+  // Sensitivity table
+  let rows='<div style="display:flex;gap:0;flex-direction:column;margin-top:8px">';
+  for(let lr=8;lr<=16;lr+=1){
+    const rr=calcFD(amt,fdRate,days,lr);
+    const isLoan=rr.rec==='loan';
+    rows+=`<div class="stat-row"><span class="stat-label">Loan Rate: ${lr}%</span><span class="stat-value" style="color:${isLoan?'var(--green)':'var(--amber)'}">${isLoan?'Take Loan':'Break FD'} (save ${fmt(Math.abs(rr.savings))})</span></div>`;
+  }
+  rows+='</div>';
+  document.getElementById('sensitivityTable').innerHTML=rows;
+}
+
+// WhatsApp Bot
+const waBotReplies={
+  default:[
+    'Namaste! I am FD Saathi 🙏 Tell me your FD amount and I will help you decide.',
+    'Please share your FD amount to get started. For example: "My FD is ₹5 lakhs"',
+  ]
+};
+let waState={step:0,amt:0,fdRate:0,days:0};
+
+function sendWa(){
+  const inp=document.getElementById('waInput');
+  const msg=inp.value.trim();
+  if(!msg)return;
+  inp.value='';
+  appendWaMsg(msg,'user');
+  setTimeout(()=>processWaMsg(msg),800+Math.random()*400);
+}
+
+function waQuick(msg){
+  document.getElementById('waInput').value=msg;
+  sendWa();
+}
+
+function appendWaMsg(text,type){
+  const body=document.getElementById('waMessages');
+  const t=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  body.insertAdjacentHTML('beforeend',`<div class="wa-msg ${type}">${text}<div class="wa-tick">${type==='bot'?'✓✓ ':''}${t}</div></div>`);
+  body.scrollTop=body.scrollHeight;
+}
+
+function appendTyping(){
+  const body=document.getElementById('waMessages');
+  body.insertAdjacentHTML('beforeend','<div class="wa-msg bot" id="waTyping"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>');
+  body.scrollTop=body.scrollHeight;
+}
+
+function removeTyping(){
+  const t=document.getElementById('waTyping');
+  if(t)t.remove();
+}
+
+function processWaMsg(msg){
+  appendTyping();
+  const lower=msg.toLowerCase();
+  let reply='';
+  if(lower.includes('loan against fd')||lower.includes('what is loan')){
+    reply='Loan Against FD is where the bank gives you money using your FD as security 🏦 Your FD stays intact and earns interest. The loan is usually 85% of FD value at a lower rate than personal loans!';
+  } else if(lower.includes('break')||lower.includes('tod')){
+    reply='Breaking FD early has a penalty — usually 0.5% + partial interest loss. Let me calculate if it\'s better to break or take a loan. Tell me your FD amount!';
+  } else {
+    const numMatch=msg.match(/[\d,]+/);
+    if(numMatch&&waState.step===0){
+      waState.amt=parseInt(numMatch[0].replace(/,/g,''));
+      waState.step=1;
+      reply=`Got it! Your FD is ${fmt(waState.amt)} 📊 What is your FD interest rate? (e.g., "7.5%")`;
+    } else if(numMatch&&waState.step===1){
+      waState.fdRate=parseFloat(numMatch[0]);
+      waState.step=2;
+      reply=`FD rate: ${waState.fdRate}% ✓ How many days are left until maturity? (e.g., "180 days")`;
+    } else if(numMatch&&waState.step===2){
+      waState.days=parseInt(numMatch[0]);
+      waState.step=3;
+      const r=calcFD(waState.amt,waState.fdRate,waState.days,11);
+      const isLoan=r.rec==='loan';
+      reply=`✅ Analysis complete!\n\n*FD Amount:* ${fmt(waState.amt)}\n*FD Penalty if broken:* ${fmt(r.penalty)}\n*Loan Interest cost:* ${fmt(r.loanInt)}\n\n🤖 *Recommendation: ${isLoan?'Take a Loan!':'Break your FD'} *\n\n${isLoan?`You save ${fmt(r.savings)} by taking a loan! Your FD stays safe. Confidence: ${r.conf}%.`:`Breaking FD is cheaper by ${fmt(Math.abs(r.savings))}. Loan would cost more here.`}\n\n${isLoan?'Reply "APPLY" to apply for loan instantly!':''}`;
+      waState.step=0;
+    } else if(lower==='apply'||lower.includes('apply')){
+      const approved=Math.round(waState.amt*0.85)||425000;
+      reply=`🎉 *Loan APPROVED!*\n\n✅ Approved Amount: ${fmt(approved)}\n💰 EMI: ~${fmt(Math.round(approved*0.01))}/month\n⏱ Disbursement: Within 24 hours\n🔒 FD Status: Safe & Earning\n\nA bank executive will call you shortly!`;
+    } else {
+      reply=waBotReplies.default[Math.floor(Math.random()*waBotReplies.default.length)];
+    }
+  }
+  setTimeout(()=>{removeTyping();appendWaMsg(reply.replace(/\n/g,'<br>'),'bot');},1200+Math.random()*500);
+}
+
+function clearWa(){
+  waState={step:0,amt:0,fdRate:0,days:0};
+  document.getElementById('waMessages').innerHTML='<div class="wa-msg bot">Namaste! 🙏 I\'m FD Saathi. I can help you decide whether to break your FD or take a loan against it. Just type your FD amount to get started!<div class="wa-tick">✓✓ 10:00 AM</div></div>';
+}
+
+function waDemo(){
+  const steps=[
+    {delay:500,msg:'My FD is 5 lakhs'},
+    {delay:2500,msg:'7.5'},
+    {delay:4500,msg:'180 days'},
+    {delay:7000,msg:'APPLY'}
+  ];
+  steps.forEach(s=>setTimeout(()=>waQuick(s.msg),s.delay));
+}
+
+// API Logs Page
+function fireApi(type){
+  const endpoints={
+    fd:'GET /fd/analyze?fd_amount=500000&fd_rate=7.5&days_left=180&loan_rate=11',
+    loan:'POST /loan/apply → {fd_amount: 500000, loan_rate: 11.0}',
+    ai:'POST /ai/decision → {fd_amount: 500000, confidence: 93%, risk: Low}',
+    health:'GET /health → {status: ok, version: 2.0.0, uptime: 99.98%}'
+  };
+  addLog(type==='health'?'ok':type,endpoints[type],'main');
+  setTimeout(()=>addLog('ok',`Response 200 OK | latency: ${20+Math.floor(Math.random()*60)}ms`,'main'),300);
+}
+
+function fireAllApis(){
+  ['fd','loan','ai','health'].forEach((t,i)=>setTimeout(()=>fireApi(t),(i+1)*400));
+}
+
+function clearLogs(){
+  document.getElementById('apiLogsMain').innerHTML='<div class="log-row"><span class="log-time">'+timeStr()+'</span><span class="log-type-engine">sys</span><span class="log-msg">Logs cleared.</span></div>';
+}
+
+// Revenue Chart
+function initRevenueChart(){
+  if(revChart)return;
+  const ctx=document.getElementById('revenueChart').getContext('2d');
+  revChart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets:[
+        {label:'SaaS MRR (₹L)',data:[1.2,1.8,2.1,2.4,2.9,3.2,3.8,4.2,4.9,5.6,6.3,7.1],backgroundColor:'rgba(26,86,219,.15)',borderColor:'#1a56db',borderWidth:2,borderRadius:4,borderSkipped:false},
+        {label:'API Revenue (₹L)',data:[0.3,0.5,0.6,0.8,1.0,1.2,1.5,1.8,2.1,2.4,2.8,3.2],backgroundColor:'rgba(15,122,74,.15)',borderColor:'#0f7a4a',borderWidth:2,borderRadius:4,borderSkipped:false}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'₹'+v+'L',font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11}}}}}
+  });
+}
+
+// Demo Mode
+function runDemo(){
+  if(demoRunning)return;
+  demoRunning=true;
+  document.getElementById('demoBanner').classList.add('visible');
+  addLog('demo','▶ Demo mode started — auto-running all features');
+  const steps=[
+    ()=>{document.getElementById('fdAmount').value=750000;document.getElementById('fdRate').value=7.75;document.getElementById('daysLeft').value=240;document.getElementById('loanRate').value=11;updateRange('fdRate','fdRateVal','%');updateRange('daysLeft','daysVal',' days');updateRange('loanRate','loanRateVal','%');liveCalc();addLog('demo','Parameters auto-filled: ₹7.5L FD, 7.75%, 240 days, 11% loan rate');},
+    ()=>{analyze();addLog('demo','Analysis executed — displaying results');},
+    ()=>{applyLoan();addLog('demo','Loan application submitted — showing approval');},
+    ()=>{document.querySelector('.nav-btn:nth-child(2)').click();showPage('simulator',document.querySelector('.nav-btn:nth-child(2)'));addLog('demo','Navigated to What-If Simulator');},
+    ()=>{document.querySelector('.nav-btn:nth-child(3)').click();showPage('whatsapp',document.querySelector('.nav-btn:nth-child(3)'));waDemo();addLog('demo','WhatsApp bot demo running...');},
+    ()=>{document.querySelector('.nav-btn:nth-child(4)').click();showPage('api',document.querySelector('.nav-btn:nth-child(4)'));fireAllApis();addLog('demo','Fired all 4 API endpoints');},
+    ()=>{document.querySelector('.nav-btn:nth-child(6)').click();showPage('revenue',document.querySelector('.nav-btn:nth-child(6)'));initRevenueChart();addLog('demo','Revenue dashboard loaded');},
+    ()=>{document.querySelector('.nav-btn:nth-child(1)').click();showPage('dashboard',document.querySelector('.nav-btn:nth-child(1)'));document.getElementById('demoBanner').classList.remove('visible');addLog('demo','✅ Demo complete — back to dashboard');demoRunning=false;}
+  ];
+  steps.forEach((s,i)=>setTimeout(s,(i+1)*2200));
+}
+
+// Init
+liveCalc();
+simUpdate();
+</script>
+</body>
+</html>
