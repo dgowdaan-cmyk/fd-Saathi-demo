@@ -1,11 +1,12 @@
 # FD Saathi 2.0 – FD Retention & Loan Conversion Engine
 
-# An AI-powered fintech decision engine that prevents unnecessary FD breakage by comparing loan cost vs penalty and recommending the optimal financial choice in real time.
+An AI-powered fintech decision engine that prevents unnecessary FD breakage by comparing loan cost vs penalty and recommending the optimal financial choice in real time.
 
 # Problem
 
 Many users break their Fixed Deposits during emergencies.
 This leads to unnecessary financial loss due to penalties, even when better options exist.
+
 ---
 
 
@@ -13,6 +14,7 @@ This leads to unnecessary financial loss due to penalties, even when better opti
 
 FD Saathi is an intelligent financial decision system that compares FD breakage vs loan cost in real time.
 It helps users choose the most cost-effective option and prevents unnecessary loss.
+
 ---
 
 # Key Features
@@ -25,7 +27,7 @@ It helps users choose the most cost-effective option and prevents unnecessary lo
 * Revenue impact dashboard for fintech companies
 * ---
 
-## 🎥 Demo Video ....... FOR  DEMO VIDEO 
+## 🎥 Demo Video ....... FOR  DEMO VIDEO (3 mins)
 [FD Saathi Demo video](https://drive.google.com/file/d/1v388AIK2ksj9v-D6n9jTwlxBPVWlYdrD/view?usp=sharing)
 ---
 
