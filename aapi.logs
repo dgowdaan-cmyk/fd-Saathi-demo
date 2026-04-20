@@ -1,0 +1,30 @@
+/**
+ * FD Saathi 2.0 — API Logs Component
+ * Simulates firing API endpoints and displaying live log output.
+ */
+
+function fireApi(type) {
+  const endpoints = {
+    fd: 'GET /fd/analyze?fd_amount=500000&fd_rate=7.5&days_left=180&loan_rate=11',
+    loan: 'POST /loan/apply → {fd_amount: 500000, loan_rate: 11.0}',
+    ai: 'POST /ai/decision → {fd_amount: 500000, confidence: 93%, risk: Low}',
+    health: 'GET /health → {status: ok, version: 2.0.0, uptime: 99.98%}'
+  };
+  addLog(type === 'health' ? 'ok' : type, endpoints[type], 'main');
+  setTimeout(() => {
+    addLog('ok', `Response 200 OK | latency: ${20 + Math.floor(Math.random() * 60)}ms`, 'main');
+  }, 300);
+}
+
+function fireAllApis() {
+  ['fd', 'loan', 'ai', 'health'].forEach((t, i) => setTimeout(() => fireApi(t), (i + 1) * 400));
+}
+
+function clearLogs() {
+  document.getElementById('apiLogsMain').innerHTML =
+    `<div class="log-row">
+      <span class="log-time">${timeStr()}</span>
+      <span class="log-type-engine">sys</span>
+      <span class="log-msg">Logs cleared.</span>
+    </div>`;
+}
