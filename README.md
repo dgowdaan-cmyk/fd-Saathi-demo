@@ -56,11 +56,7 @@ AI Layer: Decision-based financial engine
 
 ---
 
-# How to Run
 
-1. Download or clone the project
-2. Open index.html in any browser
-3. Or deploy using Netlify for live demo
 
 ---
 
